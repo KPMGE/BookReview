@@ -1,6 +1,6 @@
 import { Book } from "../../entities/Book";
 import { IBooksRepository } from "../IBooksRepository";
-import { createPool } from "mysql2/promise";
+import { createPool, RowDataPacket, ResultSetHeader } from "mysql2/promise";
 
 // Create the connection pool.
 const pool = createPool({
@@ -13,6 +13,13 @@ const pool = createPool({
   queueLimit: 0,
 });
 
+interface IBookMysql extends RowDataPacket {
+  id: string;
+  title: string;
+  author: string;
+  description: string;
+}
+
 export class MysqlBooksRepository implements IBooksRepository {
   async save({ id, title, author, description }: Book): Promise<void> {
     await pool.query(
@@ -22,8 +29,8 @@ export class MysqlBooksRepository implements IBooksRepository {
   }
 
   async getAllBooks(): Promise<Book[]> {
-    const [rows] = await pool.query("SELECT * FROM books;");
-    return rows as any;
+    const [rows] = await pool.query<IBookMysql[]>("SELECT * FROM books;");
+    return rows;
   }
 
   async delete(id: string): Promise<void> {
@@ -31,11 +38,17 @@ export class MysqlBooksRepository implements IBooksRepository {
   }
 
   async getBookById(id: string): Promise<Book> {
-    const [rows] = await pool.query("SELECT * FROM books WHERE id = ?;", [id]);
-    return rows as any;
+    const [rows] = await pool.query<ResultSetHeader & Book>(
+      "SELECT * FROM books WHERE id = ?;",
+      [id]
+    );
+    return rows;
   }
 
-  async update(id: string, { author, description, title }: Book): Promise<void> {
+  async update(
+    id: string,
+    { author, description, title }: Book
+  ): Promise<void> {
     await pool.query(
       "UPDATE books SET title=?, author=?, description=? WHERE id = ?",
       [title, author, description, id]
