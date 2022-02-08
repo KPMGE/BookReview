@@ -21,7 +21,7 @@ interface IBookMysql extends RowDataPacket {
 }
 
 export class MysqlBooksRepository implements IBooksRepository {
-  async save({ id, title, author, description }: Book): Promise<void> {
+  async save({ id, title, author, description }: Book): Promise<Book> {
     await pool.query(
       "INSERT INTO books (id, title, author, description) VALUES(?,?,?,?);",
       [id, title, author, description]
