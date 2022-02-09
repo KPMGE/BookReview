@@ -1,10 +1,10 @@
-import { Book } from "../../entities/Book";
 import { IBooksRepository } from "../../repositories/IBooksRepository";
+import { IUpdateBookRequestDTO } from "./UpdateBookDTO";
 
 export class UpdateBookUseCase {
-  constructor(private booksRepository: IBooksRepository){}
+  constructor(private booksRepository: IBooksRepository) {}
 
-  async execute(id: string, newBook: Book ) {
-    await this.booksRepository.update(id, newBook);
+  async execute(id: string, newBook: IUpdateBookRequestDTO) {
+    return await this.booksRepository.update(id, newBook);
   }
 }
