@@ -26,6 +26,13 @@ export class MysqlBooksRepository implements IBooksRepository {
       "INSERT INTO books (id, title, author, description) VALUES(?,?,?,?);",
       [id, title, author, description]
     );
+
+    const [rows] = await pool.query<ResultSetHeader & Book>(
+      "SELECT * FROM books WHERE id = ?;",
+      [id]
+    );
+
+    return rows[0];
   }
 
   async getAllBooks(): Promise<Book[]> {
@@ -33,8 +40,15 @@ export class MysqlBooksRepository implements IBooksRepository {
     return rows;
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: string): Promise<Book> {
+    const [rows] = await pool.query<ResultSetHeader & Book>(
+      "SELECT * FROM books WHERE id = ?;",
+      [id]
+    );
+
     await pool.query("DELETE FROM books WHERE id=?", [id]);
+
+    return rows[0];
   }
 
   async getBookById(id: string): Promise<Book> {
@@ -42,16 +56,31 @@ export class MysqlBooksRepository implements IBooksRepository {
       "SELECT * FROM books WHERE id = ?;",
       [id]
     );
-    return rows;
+    return rows[0];
+  }
+
+  async getBookByTitle(title: string): Promise<Book> {
+    const [rows] = await pool.query<ResultSetHeader & Book>(
+      "SELECT * FROM books WHERE title = ?;",
+      [title]
+    );
+    return rows[0];
   }
 
   async update(
     id: string,
     { author, description, title }: Book
-  ): Promise<void> {
+  ): Promise<Book> {
     await pool.query(
       "UPDATE books SET title=?, author=?, description=? WHERE id = ?",
       [title, author, description, id]
     );
+
+    const [rows] = await pool.query<ResultSetHeader & Book>(
+      "SELECT * FROM books WHERE id = ?;",
+      [id]
+    );
+
+    return rows[0];
   }
 }
