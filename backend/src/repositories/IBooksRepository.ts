@@ -4,7 +4,7 @@ export interface IBooksRepository {
   save(book: Book): Promise<Book>;
   getBookByTitle(title: string): Promise<Book>;
   getAllBooks(): Promise<Book[]>;
-  delete(id: string): Promise<void>;
+  delete(id: string): Promise<Book>;
   getBookById(id: string): Promise<Book>;
-  update(id: string, book: Book): Promise<void>;
+  update(id: string, book: Omit<Book, "id">): Promise<Book>;
 }
