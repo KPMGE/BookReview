@@ -9,15 +9,25 @@ export class BooksRepositoryForTests implements IBooksRepository {
     return book;
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: string): Promise<Book> {
+    const foundBook = this.books.find((book) => book.id === id);
+
     this.books = this.books.filter((book) => book.id !== id);
+
+    return foundBook;
   }
 
-  async update(id: string, book: Book): Promise<void> {
+  async update(
+    id: string,
+    { title, description, author }: Book
+  ): Promise<Book> {
     const foundBook = this.books.find((book) => book.id === id);
-    foundBook.title = book.title;
-    foundBook.author = book.author;
-    foundBook.description = book.description;
+
+    foundBook.title = title;
+    foundBook.author = author;
+    foundBook.description = description;
+
+    return foundBook;
   }
 
   async getAllBooks(): Promise<Book[]> {
