@@ -1,11 +1,10 @@
 import { IBooksRepository } from "../../repositories/IBooksRepository";
+import { Book } from "../../entities/Book";
 
 export class GetAllBooksUseCase {
-  constructor(private booksRepository: IBooksRepository){}
+  constructor(private booksRepository: IBooksRepository) {}
 
-  async execute() {
-    const books = await this.booksRepository.getAllBooks();
-    return books;
+  async execute(): Promise<Book[]> {
+    return await this.booksRepository.getAllBooks();
   }
 }
-
